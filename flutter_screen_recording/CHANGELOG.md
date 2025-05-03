@@ -1,3 +1,7 @@
+## 2.0.20
+
+- Update Android
+
 ## 2.0.19
 
 - Fix Audio record in iOS
