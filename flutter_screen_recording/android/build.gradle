@@ -11,7 +11,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.0'
+        classpath 'com.android.tools.build:gradle:8.1.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -31,24 +31,25 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 34
+    compileSdkVersion 35
+    namespace 'com.isvisoft.flutter_screen_recording'
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 23
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
         disable 'InvalidPackage'
     }
     compileOptions {
-        targetCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_17
     }
     android {
         kotlinOptions {
-            jvmTarget = '1.8'
+            jvmTarget = '17'
         }
     }
 }

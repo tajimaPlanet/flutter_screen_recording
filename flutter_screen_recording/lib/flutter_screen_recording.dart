@@ -79,11 +79,11 @@ class FlutterScreenRecording {
             channelDescription: messageNotification,
             channelImportance: NotificationChannelImportance.LOW,
             priority: NotificationPriority.LOW,
-            iconData: const NotificationIconData(
-              resType: ResourceType.mipmap,
-              resPrefix: ResourcePrefix.ic,
-              name: 'launcher',
-            ),
+            // iconData: const NotificationIconData(
+            //   resType: ResourceType.mipmap,
+            //   resPrefix: ResourcePrefix.ic,
+            //   name: 'launcher',
+            // ),
           ),
           iosNotificationOptions: const IOSNotificationOptions(
             showNotification: true,
