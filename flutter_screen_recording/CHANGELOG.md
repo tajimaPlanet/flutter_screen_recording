@@ -1,3 +1,7 @@
+## 2.0.21
+
+- Bug Fixed
+
 ## 2.0.20
 
 - Update Android
