@@ -11,11 +11,13 @@ class MethodChannelFlutterScreenRecording
 
   Future<bool> startRecordScreen(
     String name, {
+    String? path,
     String notificationTitle = "",
     String notificationMessage = "",
   }) async {
     final bool start = await _channel.invokeMethod('startRecordScreen', {
       "name": name,
+      "path": path,
       "audio": false,
       "title": notificationTitle,
       "message": notificationMessage,
@@ -25,11 +27,13 @@ class MethodChannelFlutterScreenRecording
 
   Future<bool> startRecordScreenAndAudio(
     String name, {
+    String? path,
     String notificationTitle = "",
     String notificationMessage = "",
   }) async {
     final bool start = await _channel.invokeMethod('startRecordScreen', {
       "name": name,
+      "path": path,
       "audio": true,
       "title": notificationTitle,
       "message": notificationMessage,

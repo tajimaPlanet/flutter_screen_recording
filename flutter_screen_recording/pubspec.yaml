@@ -10,9 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_foreground_task: ^8.1.0
-  flutter_screen_recording_platform_interface: ^1.0.3
-  flutter_screen_recording_web: ^1.0.8
+  flutter_foreground_task: ^6.0.0+1
+  flutter_screen_recording_platform_interface:
+    path: ../flutter_screen_recording_platform_interface
 
 dev_dependencies:
   flutter_test:
@@ -26,5 +26,3 @@ flutter:
         pluginClass: FlutterScreenRecordingPlugin
       ios:
         pluginClass: FlutterScreenRecordingPlugin
-      web:
-        default_package: flutter_screen_recording_web

@@ -7,18 +7,16 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_screen_recording_platform_interface/flutter_screen_recording_platform_interface.dart';
 
 class FlutterScreenRecording {
-  static Future<bool> startRecordScreen(String name, {String? titleNotification, String? messageNotification}) async {
+  static Future<bool> startRecordScreen(String name, {String? path, String? titleNotification, String? messageNotification}) async {
     try {
-      if (titleNotification == null) {
-        titleNotification = "";
-      }
-      if (messageNotification == null) {
-        messageNotification = "";
-      }
+      titleNotification ??= "";
+      messageNotification ??= "";
+      path ??= "";
 
       await _maybeStartFGS(titleNotification, messageNotification);
       final bool start = await FlutterScreenRecordingPlatform.instance.startRecordScreen(
         name,
+        path: path,
         notificationTitle: titleNotification,
         notificationMessage: messageNotification,
       );
@@ -33,17 +31,14 @@ class FlutterScreenRecording {
   }
 
   static Future<bool> startRecordScreenAndAudio(String name,
-      {String? titleNotification, String? messageNotification}) async {
+      {String? path, String? titleNotification, String? messageNotification}) async {
     try {
-      if (titleNotification == null) {
-        titleNotification = "";
-      }
-      if (messageNotification == null) {
-        messageNotification = "";
-      }
+      titleNotification ??= "";
+      messageNotification ??= "";
       await _maybeStartFGS(titleNotification, messageNotification);
       final bool start = await FlutterScreenRecordingPlatform.instance.startRecordScreenAndAudio(
         name,
+        path: path,
         notificationTitle: titleNotification,
         notificationMessage: messageNotification,
       );
@@ -79,18 +74,18 @@ class FlutterScreenRecording {
             channelDescription: messageNotification,
             channelImportance: NotificationChannelImportance.LOW,
             priority: NotificationPriority.LOW,
-            // iconData: const NotificationIconData(
-            //   resType: ResourceType.mipmap,
-            //   resPrefix: ResourcePrefix.ic,
-            //   name: 'launcher',
-            // ),
+            iconData: const NotificationIconData(
+              resType: ResourceType.mipmap,
+              resPrefix: ResourcePrefix.ic,
+              name: 'launcher',
+            ),
           ),
           iosNotificationOptions: const IOSNotificationOptions(
             showNotification: true,
             playSound: false,
           ),
           foregroundTaskOptions: const ForegroundTaskOptions(
-            // interval: 5000,
+            interval: 5000,
             autoRunOnBoot: true,
             allowWifiLock: true,
           ),
