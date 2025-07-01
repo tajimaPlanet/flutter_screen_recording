@@ -1,5 +1,7 @@
 package com.isvisoft.flutter_screen_recording
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ComponentName
@@ -49,6 +51,7 @@ class FlutterScreenRecordingPlugin :
     private var mDisplayWidth: Int = 1280
     private var mDisplayHeight: Int = 800
     private var videoName: String? = ""
+    private var path: String? = ""
     private var mFileName: String? = ""
     private var mTitle = "Your screen is being recorded"
     private var mMessage = "Your screen is being recorded"
@@ -82,6 +85,7 @@ class FlutterScreenRecordingPlugin :
                             mMediaProjection = mProjectionManager.getMediaProjection(resultCode, data!!)
                             mMediaProjection?.registerCallback(mMediaProjectionCallback!!, null)
                             mVirtualDisplay = createVirtualDisplay()
+                            mMediaRecorder?.start()
                             _result.success(true)
 
                         } catch (e: Throwable) {
@@ -126,6 +130,21 @@ class FlutterScreenRecordingPlugin :
                         mMessage = message
                     }
 
+                    // permission RECORD_AUDIO
+                    if (recordAudio == true) {
+                        if (ContextCompat.checkSelfPermission(
+                                appContext,
+                                Manifest.permission.RECORD_AUDIO
+                            ) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            ActivityCompat.requestPermissions(
+                                activityBinding!!.activity,
+                                arrayOf(Manifest.permission.RECORD_AUDIO),
+                                1000
+                            )
+                        }
+                    }
+
                     val metrics = DisplayMetrics()
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -139,6 +158,7 @@ class FlutterScreenRecordingPlugin :
                     mScreenDensity = metrics.densityDpi
                     calculateResolution(metrics)
                     videoName = call.argument<String?>("name")
+                    path = call.argument<String?>("path")
                     recordAudio = call.argument<Boolean?>("audio")
 
                     val permissionIntent = mProjectionManager.createScreenCaptureIntent()
@@ -224,7 +244,9 @@ class FlutterScreenRecordingPlugin :
             }
 
             try {
-                mFileName = if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
+                mFileName = if (!path.isNullOrEmpty()) {
+                    path
+                } else if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
                     pluginBinding!!.applicationContext.externalCacheDir?.absolutePath
                 } else {
                     pluginBinding!!.applicationContext.cacheDir?.absolutePath
@@ -235,22 +257,27 @@ class FlutterScreenRecordingPlugin :
                 return
             }
 
-            mMediaRecorder?.setVideoSource(MediaRecorder.VideoSource.SURFACE)
-            if (recordAudio!!) {
-                mMediaRecorder?.setAudioSource(MediaRecorder.AudioSource.MIC);
-                mMediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                mMediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-            } else {
-                mMediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-            }
-            mMediaRecorder?.setOutputFile(mFileName)
-            mMediaRecorder?.setVideoSize(mDisplayWidth, mDisplayHeight)
-            mMediaRecorder?.setVideoEncoder(MediaRecorder.VideoEncoder.H264)
-            mMediaRecorder?.setVideoEncodingBitRate(5 * mDisplayWidth * mDisplayHeight)
-            mMediaRecorder?.setVideoFrameRate(30)
+            mMediaRecorder?.apply {
+                setVideoSource(MediaRecorder.VideoSource.SURFACE)
 
-            mMediaRecorder?.prepare()
-            mMediaRecorder?.start()
+                if (recordAudio == true) {
+                    setAudioSource(MediaRecorder.AudioSource.MIC)
+                }
+
+                setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                setOutputFile(mFileName)
+                setVideoSize(mDisplayWidth, mDisplayHeight)
+                setVideoEncoder(MediaRecorder.VideoEncoder.H264)
+
+                if (recordAudio == true) {
+                    setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                }
+
+                setVideoEncodingBitRate(5 * mDisplayWidth * mDisplayHeight)
+                setVideoFrameRate(30)
+
+                prepare() // chỉ prepare ở đây
+            }
 
         } catch (e: Exception) {
             Log.d("--INIT-RECORDER", e.message + "")
